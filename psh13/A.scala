@@ -1,31 +1,27 @@
 object A {
-  def apo[A, B](v: B)(f: B => Option[(A, Either[B, List[A]])]): List[A] = f(v) match {
-   case None => Nil
-   case Some((a, Left(b)))   => a :: apo(b)(f)
-   case Some((a, Right(as))) => a :: as 
-}
-
-  def interleave[A](period: Int, substitutes: List[A], elems: List[A]): List[A] =
-    apo((period, substitutes, elems)){
-      case (_, _, Nil)       => None
-      case (_, Nil, v :: vs) => Some((v, Right(vs)))
-      case (0, x :: xs, vs)  => Some((x, Left((period, xs, vs))))
-      case (n, xs, v :: vs)  => Some((v, Left((n - 1, xs, vs))))  
-    }
-
   def main(args: Array[String]) = {
     val input = readLine.split(" ").map(_.toInt).toList;
     val n = input(0);
     val m = input(1);
-    val l = (for (i <- 1 to m) yield i).toList; 
-    val (first,rest) = l.splitAt(m/2);
-    val order = if (m%2 == 0) {
-      interleave(1,(first.reverse) , rest);
-    } 
+    //val l = (for (i <- 1 to m) yield i).toList; 
+    //val (first,rest) = l.splitAt(m/2);
+    var order = new Array[Int](m);
+    if(m%2 == 0){
+      for (i <- 0 until m/2)  {
+	order(i*2) = m/2 - i;
+	order(i*2+1) = m/2 + i + 1;
+      }	   
+    }
     else {
-      rest.head::interleave(1,first.reverse , rest.tail);
+      order(0) = m/2 + 1;
+      for (i <- 0 until m/2)  {
+	order(i*2+1) = (m+1)/2-(i+1);
+	order(i*2+2) = (m+1)/2 +(i+1);
+      }	
     }
     
-    println((order));
+    for(i<-0 until n) {
+      println(order(i%m))
+    }
   }
 }
