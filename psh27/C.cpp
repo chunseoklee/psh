@@ -63,12 +63,14 @@ int main(int argc, char *argv[])
   int index_evenset=0;
   //cout << "*" << odd.size() << endl;
   for (int i = index_odd; i < odd.size(); i=i+2) {
+    if(evennum ==0) break;
     //cout << "odd insert to evenset:" << odd[i] << "," << odd[i+1] << endl;
-    evenset[index_evenset].push_back(odd[i]);
-    evenset[index_evenset++].push_back(odd[i+1]);
+    evenset[index_evenset%evennum].push_back(odd[i]);
+    evenset[(index_evenset++)%evennum].push_back(odd[i+1]);
   }
 
   for (int i = index_evenset,j=0; j<even.size(); i++,j++) {
+    if(evennum ==0) break;
     evenset[i%evennum].push_back(even[j]);
   }
 
