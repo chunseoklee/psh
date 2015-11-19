@@ -1,0 +1,22 @@
+#include <iostream>
+#include <cstdio>
+#include <vector>
+using namespace std;
+
+#define MAX 200001
+
+int R,G;
+
+
+
+int main(int argc, char *argv[])
+{
+  cin >> R >> G;
+
+
+
+  return 0;
+}
+
+
+// c[l][r][g] = c[l-1][r-l][g] + c[l-1][r][g-l]

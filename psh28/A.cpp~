@@ -1,5 +1,6 @@
 #include <iostream>
 #include <cstdio>
+#include <iostream>
 
 using namespace std;
 
@@ -7,8 +8,7 @@ using namespace std;
 
 int N;
 int ar[MAX];
-int edge[MAX][MAX];
-int degree[MAX] = {0,};
+vector<int> edge[MAX];
 bool visited[MAX] = {false,};
 
 
@@ -23,9 +23,8 @@ int main(int argc, char *argv[])
 
   int s,t;
   for(int i=0;i<N;i++){
-    cin >> t >> s;
-    edge[s][degree[s]] = t;
-    degree[s] += 1;
+    cin >> s >> t;
+    edge[s].push_back(t);
   }
 
   for (int i = 0; i < N; i++) {
