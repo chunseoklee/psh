@@ -1,0 +1,34 @@
+4 4
+zzzz
+zzz.
+.z..
+zzzz
+
+
+6 6
+zz..zz
+..zzz.
+..zz..
+..zzz.
+.....z
+zzzzzz
+
+4 100
+..z.....zz....zzz...z.....z..z..zz...z.zzz.z.z..z....z.z.......z..z..zz...z.zzz..........z..z.z.....
+z.zz....z...z...z.zz.zz..z.z.z...z.zz.......z...zzzz.z.zzz.zz..z.....z.....z..z.....z.z......z..z..z
+.z...zzzz...zz...z.....zzz.zz....zz.zzz.....zz.....z.....zz.z.z....z.z.z....z.zzzz.z..z..z.z....zzzz
+.z..z....z....zzzz......z......z............z.....z...z..z......zz.zz....zzz..z.z..z.....zz.z.....z.
+
+5 3
+zzz
+zzz
+zzz
+zzz
+zz.
+
+zzz
+zzz
+z.z
+z.z
+zzz
+zzz

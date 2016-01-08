@@ -1,0 +1,113 @@
+#include <iostream>
+#include <cstdio>
+
+using namespace std;
+
+#define MAX 3001
+int N,M;
+char a[MAX][MAX];
+int l[MAX][MAX] = {-1,};
+int r[MAX][MAX] = {-1,} ;
+int dl[MAX][MAX] = {-1,};
+
+// fenwick tree
+int t[MAX];
+
+int sum(int i) // Returns the sum from index 1 to i
+{
+    int sum = 0;
+    while(i > 0)
+        sum += t[i], i -= i & -i;
+    return sum;
+}
+
+void add(int i, int k) // Adds k to element with index i
+{
+    while (i <= MAX)
+        t[i] += k, i += i & -i;
+}
+/// end fenwick tree
+
+// return sum for a diagonal with top,right as (row,col)
+int solve_a_diagonal(int row, int col) {
+  int result=0;
+
+  for (int c=col,r=row; c > 0 && r > 0; c--,r--) {
+    // 1. gather valid points on anti-diagonal
+
+  }
+
+  return result;
+}
+
+int main() {
+  scanf("%d %d\n",&N,&M);
+  for (int i=1;i<=N;i++) {
+    scanf("%s", a[i]+1);
+  }
+
+  //1. compute l
+  for (int i=1;i<=N;i++) {
+    int previous_z_index = -1;
+    for (int j=1;j<=M;j++){
+      if(previous_z_index == -1 && a[i][j] == 'z') {
+        previous_z_index = j;
+      }
+
+      if (a[i][j] == 'z') l[i][j] = previous_z_index;
+      else { l[i][j] = -1; previous_z_index = -1; }
+    }
+  }
+
+  //2. compute r
+  for (int i=1;i<=N;i++) {
+    int previous_z_index = -1;
+    for (int j=M;j>0;j--){
+      if(previous_z_index == -1 && a[i][j] == 'z') {
+        previous_z_index = j;
+      }
+
+      if (a[i][j] == 'z') r[i][j] = previous_z_index;
+      else { r[i][j] = -1; previous_z_index = -1; }
+    }
+  }
+
+  //3. compute dl for from left side to top side
+  for (int i=1;i<=N;i++) {
+    int previous_z_index = -1;
+    for (int j=1,k=i;k>0&&j<=M;j++,k--){
+      if(previous_z_index == -1 && a[k][j] == 'z') {
+        previous_z_index = j;
+      }
+
+      if (a[k][j] == 'z') dl[k][j] = j-previous_z_index+1;
+      else { dl[k][j] = -1; previous_z_index = -1; }
+    }
+  }
+  // 3-1. dl from bot to right side part
+  for (int i=1;i<=M;i++) {
+    int previous_z_index = -1;
+    for (int j=i,k=N;k>0&&j<=M;j++,k--){
+      if(previous_z_index == -1 && a[k][j] == 'z') {
+        previous_z_index = j;
+      }
+
+      if (a[k][j] == 'z') dl[k][j] = j-previous_z_index+1;
+      else { dl[k][j] = -1; previous_z_index = -1; }
+    }
+  }
+
+
+  // Solve : iterate for each diagonal
+
+
+
+  for (int i=1;i<=N;i++) {
+     for (int j=1;j<=M;j++){
+       printf("%2d ",dl[i][j]);
+     }
+     cout << endl;
+   }
+
+  return 0;
+}
