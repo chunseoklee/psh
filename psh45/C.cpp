@@ -67,23 +67,18 @@ int uptreesize[MAX];
 int uptreelength[MAX];
 
 /// sum up parent node size, length
-void uptree(int r,int weight) {
+void uptree(int r,int plength, int psize) {
 
-  int sum = 0;
-  int lengthsum = 0;
+  uptreesize[r] = psize;
+  uptreelength[r] = psize + plength;
+
   for(int i=0;i<tree[r].size();i++) {
     int ch = tree[r][i];
-    uptree(ch,weight+1);
-    sum += result.first;
-    //printf("%d's %d-th child's second=%d\n",r,i,result.second);
-    lengthsum += result.second+(result.first);
-  }
+    int _psize = uptreesize[r] + subtreesize[r] - subtreesize[ch];
+    int _plength = uptreelength[r] + subtreelength[r] - subtreelength[ch];
+    uptree(ch,_plength, _psize);
 
-  sum++; // add 1 to sum;
-  uptreesize[r] = sum;
-  uptreelength[r] = lengthsum;
-  //if (tree[r].size() == 0) return make_pair(sum,1);
-  return make_pair(sum,lengthsum);
+  }
 }
 
 
