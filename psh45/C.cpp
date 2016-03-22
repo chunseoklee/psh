@@ -66,14 +66,14 @@ pair<int,int> sumup(int r,int d) {
 int uptreesize[MAX];
 int uptreelength[MAX];
 
-/// sum up parent node size, lengths
-pair<int,int> uptree(int r,int d) {
+/// sum up parent node size, length
+void uptree(int r,int weight) {
 
   int sum = 0;
   int lengthsum = 0;
   for(int i=0;i<tree[r].size();i++) {
     int ch = tree[r][i];
-    pair<int,int> result = uptree(ch,d+1);
+    uptree(ch,weight+1);
     sum += result.first;
     //printf("%d's %d-th child's second=%d\n",r,i,result.second);
     lengthsum += result.second+(result.first);
