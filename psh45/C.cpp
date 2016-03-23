@@ -4,36 +4,36 @@
 #include <algorithm>
 #include <limits.h>
 #include <math.h>
-
+#include <iomanip>
 using namespace std;
 
 #define MAX 100001
 
-int N,M;
+long long N,M;
 vector<int> outgoing[MAX];
 vector<int> tree[MAX];
 bool visited[MAX];
-int parent[MAX];
-int subtreesize[MAX];
-int subtreelength[MAX];
-int depth[MAX];
+long long parent[MAX];
+long long subtreesize[MAX];
+long long subtreelength[MAX];
+long long depth[MAX];
 
-int indexleft[MAX];
-int indexright[MAX];
+long long indexleft[MAX];
+long long indexright[MAX];
 vector<int> euler_seq;
 
 
 void reset_visited() {
-  for(int i=1; i<=MAX; i++) {
+  for(long long i=1; i<=MAX; i++) {
     visited[i] = false;
   }
 }
 
 /// make tree
-int dfs(int r) {
+long long dfs(long long r) {
   visited[r] = true;
-  for(int i=0;i<outgoing[r].size();i++) {
-    int ch = outgoing[r][i];
+  for(long long i=0;i<outgoing[r].size();i++) {
+    long long ch = outgoing[r][i];
     if (!visited[ch]) {
       tree[r].push_back(ch);
       parent[ch] = r;
@@ -44,12 +44,12 @@ int dfs(int r) {
 
 /// sum up child node numbers
 /// make tree
-pair<int,int> sumup(int r,int d) {
+pair<long long,long long> sumup(long long r,long long d) {
   depth[r] = d;
-  int sum = 0;
-  int lengthsum = 0;
-  for(int i=0;i<tree[r].size();i++) {
-    int ch = tree[r][i];
+  long long sum = 0;
+  long long lengthsum = 0;
+  for(long long i=0;i<tree[r].size();i++) {
+    long long ch = tree[r][i];
     pair<int,int> result = sumup(ch,d+1);
     sum += result.first;
     //printf("%d's %d-th child's second=%d\n",r,i,result.second);
@@ -63,40 +63,39 @@ pair<int,int> sumup(int r,int d) {
   return make_pair(sum,lengthsum);
 }
 
-int uptreesize[MAX];
-int uptreelength[MAX];
+long long uptreesize[MAX];
+long long uptreelength[MAX];
 
 /// sum up parent node size, length
-void uptree(int r,int plength, int psize) {
+void uptree(long long r,long long plength, long long psize) {
 
   uptreesize[r] = psize;
   uptreelength[r] = psize + plength;
 
-  for(int i=0;i<tree[r].size();i++) {
-    int ch = tree[r][i];
-    int _psize = uptreesize[r] + subtreesize[r] - subtreesize[ch];
-    int _plength = uptreelength[r] + subtreelength[r] - subtreelength[ch];
+  for(long long i=0;i<tree[r].size();i++) {
+    long long ch = tree[r][i];
+    long long _psize = uptreesize[r] + subtreesize[r] - subtreesize[ch];
+    long long _plength = uptreelength[r] + subtreelength[r] - subtreelength[ch]- subtreesize[ch];
     uptree(ch,_plength, _psize);
-
   }
 }
 
 
 
-void print_tree(int r) {
-  printf("node %d's parent: %d subsize: %d lengsum: %d depth: %d l:%d r:%d\n",r,parent[r],subtreesize[r],subtreelength[r],depth[r],indexleft[r],indexright[r]);
-  for(int i=0;i<tree[r].size();i++) {
-    int ch = tree[r][i];
+void print_tree(long long r) {
+  printf("node %d's parent: %d subsize: %d lengsum: %d depth: %d l:%d r:%d us: %d ul: %d\n",r,parent[r],subtreesize[r],subtreelength[r],depth[r],indexleft[r],indexright[r],uptreesize[r],uptreelength[r]);
+  for(long long i=0;i<tree[r].size();i++) {
+    long long ch = tree[r][i];
     print_tree(ch);
   }
 }
 
 /// RMQ start
 // A utility function to get minimum of two numbers
-int minVal(int x, int y) { return (x < y)? x: y; }
+long long minVal(long long x, long long y) { return (x < y)? x: y; }
 
 // A utility function to get the middle index from corner indexes.
-int getMid(int s, int e) {  return s + (e -s)/2;  }
+long long getMid(long long s, long long e) {  return s + (e -s)/2;  }
 
 /*  A recursive function to get the minimum value in a given range
      of array indexes. The following are parameters for this function.
@@ -107,7 +106,7 @@ int getMid(int s, int e) {  return s + (e -s)/2;  }
     ss & se  --> Starting and ending indexes of the segment represented
                   by current node, i.e., st[index]
     qs & qe  --> Starting and ending indexes of query range */
-int RMQUtil(int *st, int ss, int se, int qs, int qe, int index)
+long long RMQUtil(long long *st, long long ss, long long se, long long qs, long long qe, long long index)
 {
     // If segment of this node is a part of given range, then return
     //  the min of the segment
@@ -119,14 +118,14 @@ int RMQUtil(int *st, int ss, int se, int qs, int qe, int index)
         return INT_MAX;
 
     // If a part of this segment overlaps with the given range
-    int mid = getMid(ss, se);
+    long long mid = getMid(ss, se);
     return minVal(RMQUtil(st, ss, mid, qs, qe, 2*index+1),
                   RMQUtil(st, mid+1, se, qs, qe, 2*index+2));
 }
 
 // Return minimum of elements in range from index qs (quey start) to
 // qe (query end).  It mainly uses RMQUtil()
-int RMQ(int *st, int n, int qs, int qe)
+long long RMQ(long long *st, long long n, long long qs, long long qe)
 {
     // Check for erroneous input values
     if (qs < 0 || qe > n-1 || qs > qe)
@@ -140,7 +139,7 @@ int RMQ(int *st, int n, int qs, int qe)
 
 // A recursive function that constructs Segment Tree for array[ss..se].
 // si is index of current node in segment tree st
-int constructSTUtil(int arr[], int ss, int se, int *st, int si)
+long long constructSTUtil(long long arr[], long long ss, long long se, long long *st, long long si)
 {
     // If there is one element in array, store it in current node of
     // segment tree and return
@@ -152,7 +151,7 @@ int constructSTUtil(int arr[], int ss, int se, int *st, int si)
 
     // If there are more than one elements, then recur for left and
     // right subtrees and store the minimum of two values in this node
-    int mid = getMid(ss, se);
+    long long mid = getMid(ss, se);
     st[si] =  minVal(constructSTUtil(arr, ss, mid, st, si*2+1),
                      constructSTUtil(arr, mid+1, se, st, si*2+2));
     return st[si];
@@ -161,17 +160,17 @@ int constructSTUtil(int arr[], int ss, int se, int *st, int si)
 /* Function to construct segment tree from given array. This function
    allocates memory for segment tree and calls constructSTUtil() to
    fill the allocated memory */
-int *constructST(int arr[], int n)
+long long *constructST(long long arr[], long long n)
 {
     // Allocate memory for segment tree
 
     //Height of segment tree
-    int x = (int)(ceil(log2(n)));
+    long long x = (long long)(ceil(log2(n)));
 
     // Maximum size of segment tree
-    int max_size = 2*(int)pow(2, x) - 1;
+    long long max_size = 2*(long long)pow(2, x) - 1;
 
-    int *st = new int[max_size];
+    long long *st = new long long[max_size];
 
     // Fill the allocated memory st
     constructSTUtil(arr, 0, n-1, st, 0);
@@ -182,23 +181,23 @@ int *constructST(int arr[], int n)
 
 /// RMQ end
 
-int level[MAX];
-int leveltoindex[MAX];
-int level_index = 1;
-void make_level(int r) {
+long long level[MAX];
+long long leveltoindex[MAX];
+long long level_index = 1;
+void make_level(long long r) {
   level[r] = level_index++;
   leveltoindex[level[r]] = r;
-  for(int i=0;i<tree[r].size();i++) {
-    int ch = tree[r][i];
+  for(long long i=0;i<tree[r].size();i++) {
+    long long ch = tree[r][i];
     make_level(ch);
   }
 }
 
-void euler_tour(int r) {
+void euler_tour(long long r) {
   euler_seq.push_back(level[r]);
   indexleft[r] = euler_seq.size()-1;
-  for(int i=0;i<tree[r].size();i++) {
-    int ch = tree[r][i];
+  for(long long i=0;i<tree[r].size();i++) {
+    long long ch = tree[r][i];
     euler_tour(ch);
     euler_seq.push_back(level[r]);
   }
@@ -207,18 +206,18 @@ void euler_tour(int r) {
 
 void print_euler() {
   cout << "euler_seq: ";
-  for(int i=0;i<euler_seq.size();i++) {
+  for(long long i=0;i<euler_seq.size();i++) {
     printf("%d ",leveltoindex[euler_seq[i]]);
   }
   cout << endl;
 }
 
-int _rmq_array[MAX];
-int* rmq_array;
+long long _rmq_array[MAX];
+long long* rmq_array;
 
-int lca(int s,int t) {
-  if (indexleft[s]>indexleft[t]) {int temp=s; s=t; t=temp;}
-  int _lca = leveltoindex[RMQ(rmq_array, euler_seq.size(), indexleft[s] ,indexleft[t])];
+long long lca(long long s,long long t) {
+  if (indexleft[s]>indexleft[t]) {long long temp=s; s=t; t=temp;}
+  long long _lca = leveltoindex[RMQ(rmq_array, euler_seq.size(), indexleft[s] ,indexleft[t])];
    return _lca;
 }
 
@@ -226,8 +225,8 @@ int lca(int s,int t) {
 int main() {
   cin >> N >> M;
   // read graph
-  int s,t;
-  for(int i=1; i<=N-1; i++) {
+  long long s,t;
+  for(long long i=1; i<=N-1; i++) {
     cin >> s >> t;
     outgoing[s].push_back(t);
     outgoing[t].push_back(s);
@@ -239,7 +238,7 @@ int main() {
 
   // sum up
   sumup(1,0);
-
+  uptree(1,0,0);
 
 
   // construct rmq sequence
@@ -248,7 +247,7 @@ int main() {
   //print_euler();
   //print_tree(1);
   // construct rmq
-  for (int i=0;i<euler_seq.size();i++) {
+  for (long long i=0;i<euler_seq.size();i++) {
     _rmq_array[i] = euler_seq[i];
   }
   rmq_array = constructST(_rmq_array, euler_seq.size());
@@ -256,42 +255,47 @@ int main() {
 
   // solve queries
 
-  for(int i=0; i<M; i++) {
+  for(long long i=0; i<M; i++) {
     cin >> s >> t;
-    int highnode = s; int lownode = t;
-    int distance = 0;
+    long long highnode = s; long long lownode = t;
+    long long distance = 0;
     if ( depth[s] > depth[t] ) { highnode = t; lownode =s;}
 
     distance = depth[highnode] - depth[lca(highnode,lownode)] + depth[lownode] - depth[lca(highnode,lownode)];
 
-    printf("distance  from %d to %d: %d\n",highnode,lownode,distance);
+    //printf("distance  from %d to %d: %d\n",highnode,lownode,distance);
 
 
-    int lowsize = subtreesize[lownode];
-    int lowlength = subtreelength[lownode];
+    long long lowsize = subtreesize[lownode];
+    long long lowlength = subtreelength[lownode];
 
     // extract non-lower paths from children of highnode
-    int highlength = subtreelength[highnode];
-    int highsize = subtreesize[highnode];
+    long long highlength = subtreelength[highnode];
+    long long highsize = subtreesize[highnode];
 
     if (lca(highnode,lownode) == highnode) {
       //highsize = subtreesize[1] - subtreesize[highnode];
       //highlength = subtreelength[1] - subtreelength[highnode];
-      for (int j=0;j<tree[highnode].size();j++) {
-        int ch = tree[highnode][j];
+      for (long long j=0;j<tree[highnode].size();j++) {
+        long long ch = tree[highnode][j];
         if (lca(ch,lownode) == ch) { // low is subtree of ch
           highsize -= subtreesize[ch];
           highlength -= (subtreelength[ch] + subtreesize[ch]);
         }
       }
+      highsize += uptreesize[highnode];
+      highlength += uptreelength[highnode];
     }
 
 
-    printf("hs %d hl %d ls %d ll %d\n",highsize,highlength, lowsize, lowlength);
+    //printf("hs %d hl %d ls %d ll %d\n",highsize,highlength, lowsize, lowlength);
 
-    double Answer = (highsize*lowlength + lowsize*highlength +
-                    (highsize*lowsize)*distance + (highsize*lowsize))/ (double)(highsize*lowsize);
-    printf("%f\n",Answer);
+    /*double Answer = (highsize*lowlength + lowsize*highlength +
+      (highsize*lowsize)*distance + (highsize*lowsize))/ (double)(highsize*lowsize);*/
+    double Answer =
+      lowlength/(double)lowsize + highlength/(double)highsize +
+      (double)distance + 1.0;
+    cout << std::setprecision(10) << Answer << endl;
 
     //printf("rmq query from %d to %d: %d\n", indexleft[s],indexleft[t], leveltoindex[RMQ(rmq_array, euler_seq.size(), indexleft[s] ,indexleft[t])] );
   }
