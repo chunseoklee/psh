@@ -115,7 +115,7 @@ long long RMQUtil(long long *st, long long ss, long long se, long long qs, long 
 
     // If segment of this node is outside the given range
     if (se < qs || ss > qe)
-        return INT_MAX;
+        return LLONG_MAX;
 
     // If a part of this segment overlaps with the given range
     long long mid = getMid(ss, se);
@@ -212,7 +212,7 @@ void print_euler() {
   cout << endl;
 }
 
-long long _rmq_array[MAX];
+long long _rmq_array[3*MAX];
 long long* rmq_array;
 
 long long lca(long long s,long long t) {
@@ -252,6 +252,7 @@ int main() {
   }
   rmq_array = constructST(_rmq_array, euler_seq.size());
 
+  if (euler_seq.size() > 2*N) cout << "too big euler_seq";
 
   // solve queries
 
@@ -286,15 +287,21 @@ int main() {
       highsize += uptreesize[highnode];
       highlength += uptreelength[highnode];
     }
+    if (highlength < 0) { printf("highlength minus"); }
+    if (lowlength < 0) { printf("lowlength minus"); }
+    if (lowsize < 0) { printf("lowsize minus"); }
+    if (lowlength < 0) { printf("lowlenth minus"); }
+    if (distance < 0) { printf("distance minus"); }
+    
 
 
     //printf("hs %d hl %d ls %d ll %d\n",highsize,highlength, lowsize, lowlength);
 
     /*double Answer = (highsize*lowlength + lowsize*highlength +
       (highsize*lowsize)*distance + (highsize*lowsize))/ (double)(highsize*lowsize);*/
-    double Answer =
-      lowlength/(double)lowsize + highlength/(double)highsize +
-      (double)distance + 1.0;
+    long double Answer =
+      lowlength/(long double)lowsize + highlength/(long double)highsize +
+      (long double)distance + 1.0;
     cout << std::setprecision(10) << Answer << endl;
 
     //printf("rmq query from %d to %d: %d\n", indexleft[s],indexleft[t], leveltoindex[RMQ(rmq_array, euler_seq.size(), indexleft[s] ,indexleft[t])] );
