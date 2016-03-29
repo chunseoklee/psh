@@ -1,4 +1,5 @@
 # B. KMP algorithm
+good link: [https://www.ics.uci.edu/~eppstein/161/960227.html]
 ```cpp
 // p[] : pattern
 // m   : length of pattern
@@ -34,3 +35,5 @@ int kmpSearch(char t[], char p[], int b[])
 ```
 # C. Convex Hull Trick
 [http://wcipeg.com/wiki/Convex_hull_trick]
+
+diff(l,r) : diff when converting a subarray ```[ a_l, a_(l+1), ... , a_r ]``` to ```[a_(i+1), ... a_r, a_l]```
