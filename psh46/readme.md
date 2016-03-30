@@ -39,4 +39,4 @@ int kmpSearch(char t[], char p[], int b[])
 diff(l,r) : diff when converting a subarray ```[ a_l, a_(l+1), ... , a_r ]``` to ```[a_(i+1), ... a_r, a_l]```
 Then,
 ```diff(l,r) = a_l*r - sum[r] + sum[l] - a_l*l```
-For fixed l, `max_{r>l} diff(l,r)` can be computed by Convex Hull Trick.
+For fixed l, `max_{r>l} diff(l,r)` can be computed by Convex Hull Trick since diff(l,r) is a linear function of r.
