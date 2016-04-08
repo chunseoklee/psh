@@ -15,8 +15,10 @@ struct node {
   LL value; // original input value
   LL index; // original index
   LL mergeindex; // index after merging
+  bool ismerged;
   vector< LL > outgoing;
   vector< LL > incoming;
+  LL level;
 };
 
 
@@ -25,9 +27,13 @@ node a[MAX];
 void print_a() {
   for (LL i=0;i<=N-1;i++) {
     for (LL j=0;j<=M-1;j++) {
-      LL out = -1;
-      if (a[i*M+j].outgoing.size() != 0) { out = a[i*M+j].outgoing[0]; }
-      printf("r:%lld c:%lld index:%lld v: %lld next:%lld ",i,j,a[i*M+j].index,a[i*M+j].value,out);
+      printf("r:%lld c:%lld index:%lld v: %lld \n",i,j,a[i*M+j].index,a[i*M+j].value);
+      for(int k=0;k<a[i*M+j].outgoing.size();k++) {
+        printf("out edge from %lld to %lld\n",a[i*M+j].index,a[i*M+j].outgoing[k]);
+      }
+      for(int k=0;k<a[i*M+j].incoming.size();k++) {
+        printf("in edge from %lld to %lld\n",a[i*M+j].incoming[k],a[i*M+j].index);
+      }
     }
     cout << endl;
   }
@@ -53,24 +59,18 @@ node temp_row[MAX];
 node temp_col[MAX];
 vector< LL > dfs_seq;
 set < LL > unvisited;
-vector< node > merge_g;
+vector< node > merged_g;
+bool merged[MAX];
 
 void do_merging() {
-  // 1. merge row one by one
+  for(LL i=0;i<M*N;i++) {
 
-  for (LL i=0;i<=N-1;i++) {
-    LL curnode_index;
-    // 1-1. pick smallest node
-    for (LL j=0;j<=M-1;j++){
-      if(a[i*M+j].incoming.size() == 0) {
-        curnode_index = i*M+j;
-        printf("r:%lld v:%lld\n ", i, a[curnode_index].value);
-        break;
-      }
+  }
+  for(LL i=0;i<M*N;i++) {
+    if (merged[i] == false) {
+
     }
   }
-
-
 }
 
 void dfs(LL index) {
@@ -113,6 +113,7 @@ int main() {
     // update graph
     for (LL j=0;j<=M-2;j++) {
       a[temp_row[j].index].outgoing.push_back(temp_row[j+1].index);
+      a[temp_row[j+1].index].incoming.push_back(temp_row[j].index);
     }
   }
 
@@ -125,15 +126,15 @@ int main() {
     // sort
     sort(temp_col, temp_col+N, cmpfunc);
     // update graph
-    for (LL j=0;j<N-1;j++) {
-      a[temp_col[j].index].outgoing.push_back(temp_col[j+1].index);
-      a[temp_col[j+1].index].incoming.push_back(temp_col[j].index);
+    for (LL i=0;i<N-1;i++) {
+      a[temp_col[i].index].outgoing.push_back(temp_col[i+1].index);
+      a[temp_col[i+1].index].incoming.push_back(temp_col[i].index);
     }
   }
   //print_g();
 
   //2.5 merging graph
-  do_merging();
+  //do_merging();
 
 
   // 3. build dfs seq
@@ -148,13 +149,51 @@ int main() {
     dfs(*it);
   }
 
+  /*cout << "before reverse";
+  for(int i=0;i<M*N;i++) {
+    printf("%lld ",dfs_seq[i]);
+    }*/
+
   reverse(dfs_seq.begin(), dfs_seq.end());
 
+  /*cout << "After reverse";
   for(int i=0;i<M*N;i++) {
     printf("%lld ",dfs_seq[i]);
   }
-  cout << endl;
+  cout << endl;*/
 
+  int cur_index;
+  LL max_level;
+  LL max_level_index;
+  for(LL i=0;i<M*N;i++) {
+    cur_index = dfs_seq[i];
+    max_level = -100;
+    for(LL ch=0;ch<a[cur_index].incoming.size();ch++){
+      if(max_level < a[a[cur_index].incoming[ch]].level) {
+        max_level = a[a[cur_index].incoming[ch]].level;
+        max_level_index = a[cur_index].incoming[ch];
+      }
+    }
+    if (a[cur_index].incoming.size() == 0) { a[cur_index].level = 1;}
+    else {
+      if (a[cur_index].value == a[max_level_index].value) {
+        a[cur_index].level = max_level;
+      }
+      else {
+        a[cur_index].level = max_level + 1;
+      }
+    }
+  }
+
+  for(LL i=0;i<N;i++) {
+    for(int j=0;j<M;j++) {
+      printf("%lld ",a[i*M+j].level);
+    }
+    cout << endl;
+  }
+
+
+  //print_a();
 
   return 0;
 }
