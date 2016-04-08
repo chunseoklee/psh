@@ -7,15 +7,13 @@
 using namespace std;
 
 #define MAX 1000000
-#define LL long long
+#define LL int
 
 LL N,M;
 
 struct node {
   LL value; // original input value
   LL index; // original index
-  LL mergeindex; // index after merging
-  bool ismerged;
   vector< LL > outgoing;
   vector< LL > incoming;
   LL level;
@@ -58,9 +56,10 @@ bool cmpfunc (node i,node j) { return (i.value < j.value); }
 node temp_row[MAX];
 node temp_col[MAX];
 vector< LL > dfs_seq;
-set < LL > unvisited;
+//set < LL > unvisited;
 vector< node > merged_g;
 bool merged[MAX];
+LL dfs_index;
 
 void do_merging() {
   for(LL i=0;i<M*N;i++) {
@@ -73,14 +72,25 @@ void do_merging() {
   }
 }
 
+bool visited[MAX];
+LL  unvisited;
+
 void dfs(LL index) {
 
   //printf("dfs at index %lld\n", index);
-  set< LL >::iterator it;
-  it = unvisited.find(index);
-  unvisited.erase(it);
+  //set< LL >::iterator it;
+  //it = unvisited.find(index);
+  //unvisited.erase(it);
+  if(visited[index] == false) {
+    visited[index] = true;
+    unvisited--;
+  }
+  else {
+    return;
+  }
+
   for(LL i=0;i<a[index].outgoing.size();i++) {
-    if(unvisited.find(a[index].outgoing[i]) != unvisited.end())
+    if(visited[a[index].outgoing[i]] == false)
        dfs(a[index].outgoing[i]);
   }
   dfs_seq.push_back(index);
@@ -90,12 +100,12 @@ void dfs(LL index) {
 int main() {
   // 1. read input
   cin >> N >> M;
-
+  unvisited = M*N;
 
   for (LL i=0;i<=N-1;i++) {
     for (LL j=0;j<=M-1;j++) {
       a[i*(M)+j].index = i*M+j;
-      cin >> a[i*M+j].value;
+      scanf("%d ", &a[i*M+j].value);
     }
     //sort row
     //sort(a[i], a[i]+M, cmpfunc);
@@ -139,14 +149,27 @@ int main() {
 
   // 3. build dfs seq
   // 3-1. unvisted set
-  for(int i=0;i<M*N;i++) {
+  /*for(int i=0;i<M*N;i++) {
     unvisited.insert(i);
-  }
+    }*/
   //3-2 dfs
-  while(unvisited.size() > 0) {
-    set< LL >::iterator it;
-    it = unvisited.begin();
-    dfs(*it);
+
+  while(unvisited > 0) {
+  //set< LL >::iterator it;
+  //it = unvisited.begin();
+
+    //find next unvisited
+    for(LL i=dfs_index;i<M*N;i++) {
+      if(visited[i] == false) {
+        dfs_index = i;
+        break;
+      }
+    }
+    if (dfs_index == -1) {
+      break;
+    }
+
+    dfs(dfs_index);
   }
 
   /*cout << "before reverse";
@@ -185,14 +208,18 @@ int main() {
     }
   }
 
+  int max = -1;
   for(LL i=0;i<N;i++) {
     for(int j=0;j<M;j++) {
-      printf("%lld ",a[i*M+j].level);
+      /*if (max < a[i*M+j].level) {
+        max = a[i*M+j].level;
+        }*/
+      printf("%d ",a[i*M+j].level);
     }
     cout << endl;
   }
 
-
+  //cout << max;
   //print_a();
 
   return 0;
